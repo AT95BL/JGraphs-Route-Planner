@@ -64,4 +64,24 @@ public class Departure {
     public void setMinTransferTime(int minTransferTime) {
         this.minTransferTime = minTransferTime;
     }
+    
+    /**
+     * Overrides the default toString() method to provide a human-readable representation
+     * of a Departure object.
+     * This is useful for printing object details directly (e.g., with System.out.println()).
+     *
+     * @return A string representation of the Departure object.
+     */
+    @Override
+    public String toString() {
+        return "Departure{" +
+               "type='" + type + '\'' +
+               ", from='" + from + '\'' +
+               ", to='" + to + '\'' +
+               ", departureTime='" + departureTime + '\'' +
+               ", duration=" + duration + " min" +
+               ", price=" + price +
+               ", minTransferTime=" + minTransferTime + " min" +
+               '}';
+    }
 }
