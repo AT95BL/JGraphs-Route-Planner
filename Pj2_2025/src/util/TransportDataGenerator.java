@@ -4,6 +4,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.*;
 
+import model.*;
+
 public class TransportDataGenerator {
 	
     // 1) UKLONITI: private static final int SIZE = 10; 
@@ -40,10 +42,15 @@ public class TransportDataGenerator {
     */
 
     // struktura podataka koja sadrzi sve trazene ulazne podatke
+    /*	6) IZMJENA: Uvoz Klasa TransportData, Station i Departure iz paketa module..
     public static class TransportData {
         public String[][] countryMap;
         public List<Station> stations;
         public List<Departure> departures;
+        
+        public List<Departure> getDepartures() {
+            return this.departures;
+        }
     }
 
     public static class Station {
@@ -61,6 +68,7 @@ public class TransportDataGenerator {
         public int price;
         public int minTransferTime; 				// vrijeme potrebno za transfer (u minutama)
     }
+    */
     
     /*	5) IZMJENA:
 	    public TransportData generateData() {

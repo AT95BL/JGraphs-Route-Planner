@@ -1,9 +1,9 @@
 package model;
 
 public class Station {
-    private String city;
-    private String busStation;
-    private String trainStation;
+    public String city;
+    public String busStation;
+    public String trainStation;
 
     public String getCity() {
         return city;

@@ -9,7 +9,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import util.GraphBuilder;
 import model.TransportData;
 
 // Ovu klasu biste morali ručno da parsirate iz JSON-a
@@ -143,18 +142,13 @@ public class SimpleJsonParser {
             System.out.println("Parsed data (raw Java objects):");
             System.out.println(parsedData);
 
-            // Ovdje biste morali ručno mapirati ove generičke Map i List objekte
-            // u vaše TransportData, Station, Departure klase.
-            // Ovo bi bilo prilično složeno i podložno greškama jer nemate tipsku sigurnost.
-            
-            // Object parsed = parser.parse();
-            TransportDataGenerator.TransportData data = TransportDataMapper.mapToTransportData(parsedData);
-            
-            // Sada možeš dalje raditi sa data: traženje ruta, prikaz GUI, itd.
-            System.out.println("Učitano " + data.stations.size() + " stanica i " + data.departures.size() + " polazaka.");
-            
-            Map<String, List<GraphBuilder.Edge>> graph = GraphBuilder.buildGraph(data.getDepartures());
+            // Ovdje sada pozivate vaš mapper!
+            model.TransportData data = TransportDataMapper.mapToTransportData(parsedData);
 
+            // Sada možete raditi sa 'data' objektom koji ima tipsku sigurnost
+            System.out.println("Učitano " + data.getStations().size() + " stanica i " + data.getDepartures().size() + " polazaka.");
+            data.printTransportData(); // Pozovite metodu da ispišete mapirane podatke
+            
         } catch (IOException e) {
             e.printStackTrace();
         }   

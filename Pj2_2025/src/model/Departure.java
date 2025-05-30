@@ -1,13 +1,13 @@
 package model;
 
 public class Departure {
-    private String type;           // "autobus" ili "voz"
-    private String from;
-    private String to;
-    private String departureTime;
-    private int duration;          // u minutama
-    private int price;
-    private int minTransferTime;   // u minutama
+    public String type;           // "autobus" ili "voz"
+    public String from;
+    public String to;
+    public String departureTime;
+    public int duration;          // u minutama
+    public int price;
+    public int minTransferTime;   // u minutama
 
     public String getType() {
         return type;

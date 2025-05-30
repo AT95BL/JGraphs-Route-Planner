@@ -1,62 +1,69 @@
+// util/TransportDataMapper.java
 package util;
 
-import java.util.*;
-import util.TransportDataGenerator.*;
+import model.Departure;
+import model.Station;
+import model.TransportData;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 public class TransportDataMapper {
 
     @SuppressWarnings("unchecked")
     public static TransportData mapToTransportData(Object parsedData) {
         if (!(parsedData instanceof Map)) {
-            throw new IllegalArgumentException("Root JSON element must be an object");
+            throw new IllegalArgumentException("Parsed data is not a Map.");
         }
 
         Map<String, Object> dataMap = (Map<String, Object>) parsedData;
-        TransportData data = new TransportData();
+        TransportData transportData = new TransportData();
 
-        // --- 1) Mapiranje countryMap ---
-        List<List<String>> countryMapRaw = (List<List<String>>) dataMap.get("countryMap");
-        int rows = countryMapRaw.size();
-        int cols = countryMapRaw.get(0).size();
-        String[][] countryMap = new String[rows][cols];
+        // Map countryMap
+        List<List<String>> rawCountryMap = (List<List<String>>) dataMap.get("countryMap");
+        if (rawCountryMap != null && !rawCountryMap.isEmpty()) {
+            int numRows = rawCountryMap.size();
+            int numCols = rawCountryMap.get(0).size();
+            String[][] countryMapArray = new String[numRows][numCols];
+            for (int i = 0; i < numRows; i++) {
+                countryMapArray[i] = rawCountryMap.get(i).toArray(new String[0]);
+            }
+            transportData.setCountryMap(countryMapArray);
+        }
 
-        for (int i = 0; i < rows; i++) {
-            List<String> row = countryMapRaw.get(i);
-            for (int j = 0; j < row.size(); j++) {
-                countryMap[i][j] = row.get(j);
+        // Map stations
+        List<Map<String, Object>> rawStations = (List<Map<String, Object>>) dataMap.get("stations");
+        List<Station> stations = new ArrayList<>();
+        if (rawStations != null) {
+            for (Map<String, Object> rawStation : rawStations) {
+                Station station = new Station();
+                station.setCity((String) rawStation.get("city"));
+                station.setBusStation((String) rawStation.get("busStation"));
+                station.setTrainStation((String) rawStation.get("trainStation"));
+                stations.add(station);
             }
         }
-        data.countryMap = countryMap;
+        transportData.setStations(stations);
 
-        // --- 2) Mapiranje stations ---
-        List<Map<String, Object>> stationsRaw = (List<Map<String, Object>>) dataMap.get("stations");
-        List<Station> stations = new ArrayList<>();
-        for (Map<String, Object> s : stationsRaw) {
-            Station station = new Station();
-            station.city = (String) s.get("city");
-            station.busStation = (String) s.get("busStation");
-            station.trainStation = (String) s.get("trainStation");
-            stations.add(station);
+        // Map departures
+        List<Map<String, Object>> rawDepartures = (List<Map<String, Object>>) dataMap.get("departures");
+        List<Departure> departures = new ArrayList<>(); // Nova lista za mapirane Departure objekte
+        if (rawDepartures != null) {
+            for (Map<String, Object> rawDeparture : rawDepartures) {
+                Departure departure = new Departure();
+                departure.setType((String) rawDeparture.get("type"));
+                departure.setFrom((String) rawDeparture.get("from"));
+                departure.setTo((String) rawDeparture.get("to"));
+                departure.setDepartureTime((String) rawDeparture.get("departureTime"));
+                departure.setDuration(((Number) rawDeparture.get("duration")).intValue());
+                departure.setPrice(((Number) rawDeparture.get("price")).intValue());
+                departure.setMinTransferTime(((Number) rawDeparture.get("minTransferTime")).intValue());
+                departures.add(departure); // Dodajemo mapirani objekat u novu listu
+            }
         }
-        data.stations = stations;
+        transportData.setDepartures(departures); // Postavljamo ispravnu listu tipa List<Departure>
 
-        // --- 3) Mapiranje departures ---
-        List<Map<String, Object>> departuresRaw = (List<Map<String, Object>>) dataMap.get("departures");
-        List<Departure> departures = new ArrayList<>();
-        for (Map<String, Object> d : departuresRaw) {
-            Departure departure = new Departure();
-            departure.type = (String) d.get("type");
-            departure.from = (String) d.get("from");
-            departure.to = (String) d.get("to");
-            departure.departureTime = (String) d.get("departureTime");
-            departure.duration = ((Number) d.get("duration")).intValue();
-            departure.price = ((Number) d.get("price")).intValue();
-            departure.minTransferTime = ((Number) d.get("minTransferTime")).intValue();
-            departures.add(departure);
-        }
-        data.departures = departures;
-
-        return data;
+        return transportData;
     }
-    
 }
