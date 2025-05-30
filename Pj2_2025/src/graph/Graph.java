@@ -257,6 +257,7 @@ public class Graph {
          * Izračunava ukupno trajanje putovanja u minutama.
          * @return Ukupno trajanje putovanja u minutama.
          */
+        /*
         public long getTotalDurationMinutes() {
             if (edges.isEmpty()) {
                 return 0;
@@ -270,6 +271,26 @@ public class Graph {
             }
             return 0;
         }
+        */
+        public long getTotalDurationMinutes() {
+            if (edges.isEmpty()) return 0;
+
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
+            LocalTime startTime = null;
+
+            for (Edge edge : edges) {
+                if ("departure".equals(edge.getType()) && edge.getDepartureDetails() != null) {
+                    startTime = LocalTime.parse(edge.getDepartureDetails().getDepartureTime(), formatter);
+                    break;
+                }
+            }
+
+            if (startTime != null && arrivalTime != null) {
+                return ChronoUnit.MINUTES.between(startTime, arrivalTime);
+            }
+            return 0;
+        }
+
 
         /**
          * Izračunava ukupnu cijenu putovanja.

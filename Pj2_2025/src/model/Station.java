@@ -28,4 +28,9 @@ public class Station {
     public void setTrainStation(String trainStation) {
         this.trainStation = trainStation;
     }
+    
+    @Override
+    public String toString() {
+        return "City: " + city + ", Bus Station: " + busStation + ", Train Station: " + trainStation;
+    }
 }
