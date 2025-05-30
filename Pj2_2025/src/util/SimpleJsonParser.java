@@ -1,12 +1,16 @@
 package util;
 
 import java.io.IOException;
+
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import util.GraphBuilder;
+import model.TransportData;
 
 // Ovu klasu biste morali ručno da parsirate iz JSON-a
 // Bez Gson-a, to bi bilo dosta posla
@@ -142,9 +146,17 @@ public class SimpleJsonParser {
             // Ovdje biste morali ručno mapirati ove generičke Map i List objekte
             // u vaše TransportData, Station, Departure klase.
             // Ovo bi bilo prilično složeno i podložno greškama jer nemate tipsku sigurnost.
+            
+            // Object parsed = parser.parse();
+            TransportDataGenerator.TransportData data = TransportDataMapper.mapToTransportData(parsedData);
+            
+            // Sada možeš dalje raditi sa data: traženje ruta, prikaz GUI, itd.
+            System.out.println("Učitano " + data.stations.size() + " stanica i " + data.departures.size() + " polazaka.");
+            
+            Map<String, List<GraphBuilder.Edge>> graph = GraphBuilder.buildGraph(data.getDepartures());
 
         } catch (IOException e) {
             e.printStackTrace();
-        }
+        }   
     }
 }
