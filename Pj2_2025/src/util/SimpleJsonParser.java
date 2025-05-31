@@ -21,26 +21,26 @@ import graph.*;
 
 public class SimpleJsonParser {
 
-    private String jsonString;
-    private int index;
+    public String jsonString;
+    public int index;
 
     public SimpleJsonParser(String jsonString) {
         this.jsonString = jsonString;
         this.index = 0;
     }
 
-    private void skipWhitespace() {
+    public void skipWhitespace() {
         while (index < jsonString.length() && Character.isWhitespace(jsonString.charAt(index))) {
             index++;
         }
     }
 
-    private char peek() {
+    public char peek() {
         skipWhitespace();
         return jsonString.charAt(index);
     }
 
-    private char consume() {
+    public char consume() {
         skipWhitespace();
         return jsonString.charAt(index++);
     }
@@ -69,7 +69,7 @@ public class SimpleJsonParser {
         }
     }
 
-    private Map<String, Object> parseObject() {
+    public Map<String, Object> parseObject() {
         Map<String, Object> object = new HashMap<>();
         consume(); // '{'
         skipWhitespace();
@@ -89,7 +89,7 @@ public class SimpleJsonParser {
         return object;
     }
 
-    private List<Object> parseArray() {
+    public List<Object> parseArray() {
         List<Object> array = new ArrayList<>();
         consume(); // '['
         skipWhitespace();
@@ -105,7 +105,7 @@ public class SimpleJsonParser {
         return array;
     }
 
-    private String parseString() {
+    public String parseString() {
         consume(); // '"'
         StringBuilder sb = new StringBuilder();
         while (peek() != '"') {
@@ -115,7 +115,7 @@ public class SimpleJsonParser {
         return sb.toString();
     }
 
-    private Number parseNumber() {
+    public Number parseNumber() {
         StringBuilder sb = new StringBuilder();
         while (index < jsonString.length() && (Character.isDigit(jsonString.charAt(index)) || jsonString.charAt(index) == '.' || jsonString.charAt(index) == '-')) {
             sb.append(jsonString.charAt(index++));
@@ -132,6 +132,7 @@ public class SimpleJsonParser {
     }
 
     // Main metoda za testiranje (samo za demonstraciju parsiranja generičkih JSON struktura)
+    /*
     public static void main(String[] args) {
         String jsonFilePath = "transport_data.json"; // Vaš generisani fajl
 
@@ -150,7 +151,7 @@ public class SimpleJsonParser {
             System.out.println("Učitano " + data.getStations().size() + " stanica i " + data.getDepartures().size() + " polazaka.");
             data.printTransportData(); // Pozovite metodu da ispišete mapirane podatke
             
-         // --- IZGRADNJA GRAFA I TESTIRANJE ALGORITMA ---
+            // --- IZGRADNJA GRAFA I TESTIRANJE ALGORITMA ---
             Graph transportGraph = new Graph();
             transportGraph.buildGraph(data);
             System.out.println("Graf uspješno izgrađen sa " + transportGraph.getAllNodes().size() + " čvorova.");
@@ -200,5 +201,5 @@ public class SimpleJsonParser {
         } catch (IOException e) {
             e.printStackTrace();
         }   
-    }
+    }*/
 }

@@ -8,13 +8,13 @@ import model.*;
 
 public class TransportDataGenerator {
 	
-    // 1) UKLONITI: private static final int SIZE = 10; 
-    private static final int DEPARTURES_PER_STATION = 5;
-    private static final Random random = new Random();
+    // 1) UKLONITI: public static final int SIZE = 10; 
+    public static final int DEPARTURES_PER_STATION = 5;
+    public static final Random random = new Random();
 
     // 2) Dodati nove varijable za dimenzije
-    private int numRows; 									// Broj redova (n)
-    private int numCols; 									// Broj kolona (m)
+    public int numRows; 									// Broj redova (n)
+    public int numCols; 									// Broj kolona (m)
     
     /**
      * 3)
@@ -90,7 +90,7 @@ public class TransportDataGenerator {
     
     // generisanje gradova (G_X_Y)
     /*	6) IZMJENA:S
-	    private String[][] generateCountryMap() {
+	    public String[][] generateCountryMap() {
 	        String[][] countryMap = new String[SIZE][SIZE];
 	        for (int x = 0; x < SIZE; x++) {
 	            for (int y = 0; y < SIZE; y++) {
@@ -105,7 +105,7 @@ public class TransportDataGenerator {
      * Gradovi su nazvani G_X_Y, gdje su X i Y njihove koordinate.
      * @return Dvodimenzionalni niz stringova koji predstavlja mapu države.
      */
-    private String[][] generateCountryMap() {
+    public String[][] generateCountryMap() {
         String[][] countryMap = new String[this.numRows][this.numCols]; // Koristimo numRows i numCols
         for (int x = 0; x < this.numRows; x++) { // Koristimo numRows
             for (int y = 0; y < this.numCols; y++) { // Koristimo numCols
@@ -117,7 +117,7 @@ public class TransportDataGenerator {
 
     // generisanje autobuskih i zeljeznickih stanica
     /*	6) IZMJENA:
-	    private List<Station> generateStations() {
+	    public List<Station> generateStations() {
 	        List<Station> stations = new ArrayList<>();
 	        for (int x = 0; x < SIZE; x++) {
 	            for (int y = 0; y < SIZE; y++) {
@@ -135,7 +135,7 @@ public class TransportDataGenerator {
      * Generise listu autobuskih i željezničkih stanica za svaki grad u mapi.
      * @return Lista Station objekata.
      */
-    private List<Station> generateStations() {
+    public List<Station> generateStations() {
         List<Station> stations = new ArrayList<>();
         for (int x = 0; x < this.numRows; x++) { // Koristimo numRows
             for (int y = 0; y < this.numCols; y++) { // Koristimo numCols
@@ -150,7 +150,7 @@ public class TransportDataGenerator {
     }
 
     // generisanje vremena polazaka
-    private List<Departure> generateDepartures(List<Station> stations) {
+    public List<Departure> generateDepartures(List<Station> stations) {
         List<Departure> departures = new ArrayList<>();
 
         for (Station station : stations) {
@@ -170,7 +170,7 @@ public class TransportDataGenerator {
         return departures;
     }
 
-    private Departure generateDeparture(String type, String from, int x, int y) {
+    public Departure generateDeparture(String type, String from, int x, int y) {
         Departure departure = new Departure();
         departure.type = type;
         departure.from = from;
@@ -196,7 +196,7 @@ public class TransportDataGenerator {
 
     // pronalazak susjednih gradova
     /*	7) IZMJENA
-	    private List<String> getNeighbors(int x, int y) {
+	    public List<String> getNeighbors(int x, int y) {
 	        List<String> neighbors = new ArrayList<>();
 	        int[][] directions = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}}; 
 	
@@ -217,7 +217,7 @@ public class TransportDataGenerator {
      * @param y Y koordinata trenutnog grada.
      * @return Lista stringova sa nazivima susjednih gradova.
      */
-    private List<String> getNeighbors(int x, int y) {
+    public List<String> getNeighbors(int x, int y) {
         List<String> neighbors = new ArrayList<>();
         int[][] directions = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}};
 
@@ -234,7 +234,7 @@ public class TransportDataGenerator {
 
     // cuvanje podataka u JSON mapu
     /*	8)	IZMJENA
-	    private void saveToJson(TransportData data, String filename) {
+	    public void saveToJson(TransportData data, String filename) {
 	        try (FileWriter file = new FileWriter(filename)) {
 	            StringBuilder json = new StringBuilder();
 	            json.append("{\n");
@@ -295,7 +295,7 @@ public class TransportDataGenerator {
      * @param data Objekat TransportData koji sadrži sve generisane podatke.
      * @param filename Ime fajla u koji će se podaci sačuvati.
      */
-    private void saveToJson(TransportData data, String filename) {
+    public void saveToJson(TransportData data, String filename) {
         try (FileWriter file = new FileWriter(filename)) {
             StringBuilder json = new StringBuilder();
             json.append("{\n");
