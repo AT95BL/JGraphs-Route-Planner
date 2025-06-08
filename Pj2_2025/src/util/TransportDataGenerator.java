@@ -8,13 +8,21 @@ import model.*;
 
 public class TransportDataGenerator {
 	
-    // 1) UKLONITI: public static final int SIZE = 10; 
-    public static final int DEPARTURES_PER_STATION = 5;
+    // 1) UKLONITI: tekstom klase, hardcode-ovane vrijednosti!!; 
+    public static int DEPARTURES_PER_STATION = 5;				
     public static final Random random = new Random();
 
-    // 2) Dodati nove varijable za dimenzije
+    // 2) Dodati nove varijable za dimenzije matrice 
+    /**
+     * The number of rows (n) in the country map grid.
+    */
     public int numRows; 									// Broj redova (n)
+    /**
+     * The number of columns (m) in the country map grid.
+    */
     public int numCols; 									// Broj kolona (m)
+    
+    public int departuresPerStation;
     
     /**
      * 3)
@@ -25,12 +33,13 @@ public class TransportDataGenerator {
     public TransportDataGenerator(int numRows, int numCols) {
         this.numRows = numRows;
         this.numCols = numCols;
+        departuresPerStation = DEPARTURES_PER_STATION;
     }
     
-    // 4)	generisao sam file, ovaj main mi za sada više ne treba..
+    // 4)	generisao sam json-file, ovaj main mi za sada vise ne treba..
     /*
     public static void main(String[] args) {
-        // Primjer poziva s dinamičkim dimenzijama
+        // Primjer poziva s dinamickim dimenzijama
         // U realnoj aplikaciji, ove dimenzije bi dolazile iz GUI unosa korisnika
         int n = 5; // 
         int m = 5; // 
@@ -79,6 +88,12 @@ public class TransportDataGenerator {
 	        return data;
 	    }
     */
+    /**
+     * Generates a complete set of transportation data, including the country map,
+     * stations within each city, and various departures from these stations.
+     *
+     * @return A {@link TransportData} object containing the generated map, stations, and departures.
+    */
     public TransportData generateData() {
         TransportData data = new TransportData();
         data.countryMap = generateCountryMap();
@@ -101,10 +116,13 @@ public class TransportDataGenerator {
 	    }
     */
     /**
-     * Generise matricu gradova dimenzija n x m.
-     * Gradovi su nazvani G_X_Y, gdje su X i Y njihove koordinate.
-     * @return Dvodimenzionalni niz stringova koji predstavlja mapu države.
-     */
+     * Generates a 2D array representing the country map. Each element in the array
+     * is a string in the format "G_X_Y", where X and Y are the coordinates of the city
+     * within the grid. The dimensions of the map are determined by {@link #numRows}
+     * and {@link #numCols}.
+     *
+     * @return A {@code String[][]} representing the grid-based country map.
+    */
     public String[][] generateCountryMap() {
         String[][] countryMap = new String[this.numRows][this.numCols]; // Koristimo numRows i numCols
         for (int x = 0; x < this.numRows; x++) { // Koristimo numRows
@@ -132,8 +150,11 @@ public class TransportDataGenerator {
 	    }
     */
     /**
-     * Generise listu autobuskih i željezničkih stanica za svaki grad u mapi.
-     * @return Lista Station objekata.
+     * Generates a list of {@link Station} objects, one for each city in the country map.
+     * Each station includes the city name, a bus station name (e.g., "A_X_Y"),
+     * and a train station name (e.g., "Z_X_Y").
+     *
+     * @return A {@link List} of {@link Station} objects.
      */
     public List<Station> generateStations() {
         List<Station> stations = new ArrayList<>();
@@ -150,6 +171,14 @@ public class TransportDataGenerator {
     }
 
     // generisanje vremena polazaka
+    /**
+     * Generates a list of {@link Departure} objects based on the provided list of stations.
+     * For each station, it generates a fixed number of bus and train departures
+     * to neighboring cities.
+     *
+     * @param stations A {@link List} of {@link Station} objects from which departures will be generated.
+     * @return A {@link List} of {@link Departure} objects.
+     */
     public List<Departure> generateDepartures(List<Station> stations) {
         List<Departure> departures = new ArrayList<>();
 
@@ -158,18 +187,30 @@ public class TransportDataGenerator {
             int y = Integer.parseInt(station.city.split("_")[2]);
 
             // generisanje polazaka autobusa
-            for (int i = 0; i < DEPARTURES_PER_STATION; i++) {
+            for (int i = 0; i < departuresPerStation; i++) {
                 departures.add(generateDeparture("autobus", station.busStation, x, y));
             }
 
             // generisanje polazaka vozova
-            for (int i = 0; i < DEPARTURES_PER_STATION; i++) {
+            for (int i = 0; i < departuresPerStation; i++) {
                 departures.add(generateDeparture("voz", station.trainStation, x, y));
             }
         }
         return departures;
     }
-
+    
+    /**
+     * Generates a single {@link Departure} object with random characteristics.
+     * The destination of the departure is a randomly chosen neighboring city.
+     * Other attributes like departure time, duration, price, and minimum transfer time
+     * are also randomized.
+     *
+     * @param type The type of transport (e.g., "autobus" or "voz").
+     * @param from The name of the departure station.
+     * @param x The X coordinate of the city where the departure originates.
+     * @param y The Y coordinate of the city where the departure originates.
+     * @return A {@link Departure} object with generated details.
+     */
     public Departure generateDeparture(String type, String from, int x, int y) {
         Departure departure = new Departure();
         departure.type = type;
@@ -211,11 +252,14 @@ public class TransportDataGenerator {
 	    }
     */
     /**
-     * Pronalazi susjedne gradove za dati grad na koordinatama (x, y).
-     * Susjedni gradovi su oni koji su direktno gore, dole, lijevo ili desno.
-     * @param x X koordinata trenutnog grada.
-     * @param y Y koordinata trenutnog grada.
-     * @return Lista stringova sa nazivima susjednih gradova.
+     * Retrieves a list of direct neighboring cities for a given city at coordinates (x, y).
+     * Neighbors are considered to be cities immediately to the left, right, top, or bottom
+     * within the grid, respecting the map boundaries defined by {@link #numRows} and {@link #numCols}.
+     *
+     * @param x The X coordinate of the current city.
+     * @param y The Y coordinate of the current city.
+     * @return A {@link List} of strings, where each string is the name of a neighboring city
+     * (e.g., "G_X_Y").
      */
     public List<String> getNeighbors(int x, int y) {
         List<String> neighbors = new ArrayList<>();
@@ -224,7 +268,7 @@ public class TransportDataGenerator {
         for (int[] dir : directions) {
             int nx = x + dir[0];
             int ny = y + dir[1];
-            // Provjera granica pomoću numRows i numCols
+            // Provjera granica pomocu numRows i numCols
             if (nx >= 0 && nx < this.numRows && ny >= 0 && ny < this.numCols) { // Koristimo numRows i numCols
                 neighbors.add("G_" + nx + "_" + ny);
             }
@@ -291,9 +335,13 @@ public class TransportDataGenerator {
 	    }
     */
     /**
-     * Čuva generisane transportne podatke u JSON fajl.
-     * @param data Objekat TransportData koji sadrži sve generisane podatke.
-     * @param filename Ime fajla u koji će se podaci sačuvati.
+     * Saves the generated transport data (country map, stations, and departures)
+     * into a JSON file. The data is formatted as a JSON object with three main arrays:
+     * "countryMap", "stations", and "departures".
+     *
+     * @param data The {@link TransportData} object containing all the data to be saved.
+     * @param filename The name of the file (including path, if necessary) where the JSON data will be written.
+     * @throws IOException If an I/O error occurs during file writing.
      */
     public void saveToJson(TransportData data, String filename) {
         try (FileWriter file = new FileWriter(filename)) {

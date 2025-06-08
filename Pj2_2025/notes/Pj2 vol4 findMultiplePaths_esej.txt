@@ -1,0 +1,48 @@
+Objašnjenje funkcije findMultiplePaths u klasi Graph
+
+U okviru modelovanja saobraćajne mreže, često nije dovoljno pronaći samo jednu optimalnu putanju između dvije tačke – korisniku može biti korisno vidjeti više alternativa, kao što su rute koje traju nešto duže, ali imaju manje presjedanja ili nižu cijenu. Upravo iz tog razloga u klasu Graph uvodimo metodu findMultiplePaths(...), koja omogućava pronalaženje više različitih putanja između dva čvora, na osnovu različitih kriterijuma optimizacije.
+
+Opis Funkcije findMultiplePaths
+
+Ova metoda pronalazi između 2 i 5 (ili više, po potrebi) različitih ruta između dvije stanice u grafu. Svaka ruta se razlikuje bar po jednoj korišćenoj grani (segmentu), čime korisnik dobija korisne alternative za planiranje putovanja.
+
+Metoda koristi pristup poznat kao "K-shortest paths" — to je koncept iz teorije grafova koji označava pronalaženje K različitih najkraćih puteva (ne nužno disjunktnih) između dva čvora.
+
+Tehnički Mehanizam
+
+findMultiplePaths(...) funkcioniše na sledeći način:
+
+1. Prva ruta se pronalazi korišćenjem tvoje već postojeće metode findOptimalRoute(...), koja koristi Dijkstrin algoritam prilagođen kriterijumu (vrijeme, cijena, presjedanja).
+2. Nakon što se pronađe ruta, jedna od grana (ivica) koja se koristi u toj putanji se označava kao "blokirana".
+3. Prilikom sledećeg poziva algoritma, ta grana se ignorše u pretrazi, čime se forsira graf da pronađe novu, drugačiju putanju.
+4. Ovaj proces se ponavlja sve dok se ne pronađe željeni broj putanja (npr. 5), ili dok ne nestane opcija.
+
+Algoritam: Dijkstra + Blokiranje Grana
+
+Glavni algoritam koji se koristi za izračunavanje svake rute jeste Dijkstra algoritam – standardni algoritam za pronalaženje najkraće staze u grafu sa nenegativnim težinama. U našoj implementaciji:
+
+- Dijkstra algoritam minimizuje vrijeme, cijenu, ili broj presjedanja, u zavisnosti od izabranog kriterijuma.
+- Svaka ivica ima odgovarajuću težinu, koja zavisi od odabranog kriterijuma.
+- Umjesto da modifikujemo strukturu grafa, koristimo skup ID-jeva blokiranih grana i u svakom novom pokušaju izbacujemo te grane iz pretrage.
+
+Zašto je ova metoda korisna
+
+U stvarnim sistemima javnog prevoza (ili putnih planera poput Google Maps, Rome2Rio itd.), korisnici očekuju:
+
+- više opcija za rutu,
+- da mogu porediti trajanje, cijenu i broj presjedanja,
+- da izaberu optimalnu rutu po svom ukusu (npr. skuplje ali bez presjedanja).
+
+Ova metoda omogućava upravo to: vraća više valjanih i različitih puteva između dvije lokacije, čime se poboljšava korisničko iskustvo i funkcionalnost sistema.
+
+Mogućnosti proširenja
+
+Metodu findMultiplePaths(...) je moguće dalje proširiti:
+
+- Umjesto da se blokira samo jedna grana iz prethodne putanje, može se koristiti Yenov algoritam koji sistematski pravi sve moguće odstupanja (divergencije) iz već pronađenih ruta.
+- Rezultati se mogu sortirati po različitim kriterijumima i prikazivati korisniku sa dodatnim metrikama (trajanje, cijena, broj presjedanja).
+- Može se uvesti i višekriterijumska optimizacija, gdje se koristi kombinovana težina (npr. α * vrijeme + β * cijena).
+
+Zaključak
+
+Metoda findMultiplePaths predstavlja pametan, modularan i proširiv pristup za pronalaženje više alternativa između dvije stanice u grafu. Kombinovanjem Dijkstra algoritma sa strategijom "blokiranja grana", omogućava jednostavnu, ali efikasnu implementaciju pronalaženja više različitih ruta u složenoj transportnoj mreži. Njena snaga je u tome što koristi postojeće algoritme, a dodatnu fleksibilnost daje kroz kontrolu kriterijuma optimizacije.

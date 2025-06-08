@@ -1,0 +1,13 @@
+Račun za kupovinu karte (Dodatna ruta):
+-----------------------------------
+Relacija: A_0_0 (G_0_0) do A_0_2 (G_0_2)
+Vreme kupovine: 07.06.2025. 09:51
+Ukupno trajanje: 472 min
+Ukupna cena: 606€
+Broj presjedanja: 4
+-----------------------------------
+Detalji rute:
+  Transfer A_0_0 -> Z_0_0 (20 min)
+  Z_0_0 (G_0_0) -> Z_0_1 (G_0_1) [voz, 01:30, 120min, 326€]
+  Transfer Z_0_1 -> A_0_1 (20 min)
+  A_0_1 (G_0_1) -> A_0_2 (G_0_2) [autobus, 08:15, 67min, 280€]

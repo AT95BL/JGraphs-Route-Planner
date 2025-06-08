@@ -14,16 +14,16 @@ import java.util.regex.Pattern;
 import java.util.stream.*;
 
 /**
- * Upravlja čuvanjem računa i učitavanjem statistike prodaje.
+ * Upravlja cuvanjem racuna i ucitavanjem statistike prodaje.
  */
 public class ReceiptManager {
 
     private static final String RECEIPTS_FOLDER = "racuni";
 
     /**
-     * Čuva detalje računa u tekstualni fajl unutar "racuni" foldera.
-     * @param receiptDetails Sadržaj računa.
-     * @throws IOException Ako dođe do greške pri pisanju fajla.
+     * cuva detalje racuna u tekstualni fajl unutar "racuni" foldera.
+     * @param receiptDetails Sadrzaj racuna.
+     * @throws IOException Ako dodje do greške pri pisanju fajla.
      */
     public static void saveReceipt(String receiptDetails) throws IOException {
         Path folderPath = Paths.get(RECEIPTS_FOLDER);
@@ -40,14 +40,14 @@ public class ReceiptManager {
     }
 
     /**
-     * Izračunava ukupan broj prodatih karata čitajući sve račune.
+     * Izracunava ukupan broj prodatih karata citajuci sve racune.
      * @return Ukupan broj prodatih karata.
-     * @throws IOException Ako dođe do greške pri čitanju fajlova.
+     * @throws IOException Ako dodje do greške pri citanju fajlova.
      */
     public static int getTotalTicketsSold() throws IOException {
         Path folderPath = Paths.get(RECEIPTS_FOLDER);
         if (!Files.exists(folderPath)) {
-            return 0; // Nema računa
+            return 0; // Nema racuna
         }
 
         // Broj fajlova u folderu "racuni"
@@ -55,9 +55,9 @@ public class ReceiptManager {
     }
 
     /**
-     * Izračunava ukupan prihod čitajući sve račune i parsirajući cene.
+     * Izracunava ukupan prihod citajuci sve racune i parsirajuci cene.
      * @return Ukupan prihod.
-     * @throws IOException Ako dođe do greške pri čitanju fajlova.
+     * @throws IOException Ako dodje do greške pri citanju fajlova.
      */
     public static double getTotalRevenue() throws IOException {
         Path folderPath = Paths.get(RECEIPTS_FOLDER);
@@ -66,7 +66,7 @@ public class ReceiptManager {
         }
 
         double totalRevenue = 0.0;
-        Pattern pricePattern = Pattern.compile("Ukupna cena: (\\d+)€"); // Regex za pronalaženje cene
+        Pattern pricePattern = Pattern.compile("Ukupna cena: (\\d+)€"); // Regex za pronalazenje cene
 
         try (var stream = Files.list(folderPath)) {
             for (Path filePath : stream.filter(Files::isRegularFile).collect(Collectors.toList())) {
@@ -79,7 +79,7 @@ public class ReceiptManager {
                         } catch (NumberFormatException e) {
                             System.err.println("Greška pri parsiranju cene u fajlu " + filePath.getFileName() + ": " + line);
                         }
-                        break; // Pretpostavljamo da je cena samo jednom po računu
+                        break; // Pretpostavljamo da je cena samo jednom po racunu
                     }
                 }
             }

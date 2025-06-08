@@ -1,20 +1,20 @@
 // src/graph/Node.java
 package graph;
 
-import model.Station; // Koristimo model.Station za podatke o gradu i stanicama
+import model.Station; 	// Koristimo model.Station za podatke o gradu i stanicama
 
 /**
- * Predstavlja čvor u transportnom grafu. Svaki čvor odgovara jednoj autobuskoj ili željezničkoj stanici.
+ * Predstavlja cvor u transportnom grafu. Svaki cvor odgovara jednoj autobuskoj ili željeznickoj stanici.
  */
 public class Node {
-    public String id; // Jedinstveni ID čvora, npr. "A_0_0" (autobuska stanica u gradu G_0_0) ili "Z_0_0" (željeznička stanica u gradu G_0_0)
+    public String id; // Jedinstveni ID cvora, npr. "A_0_0" (autobuska stanica u gradu G_0_0) ili "Z_0_0" (željeznicka stanica u gradu G_0_0)
     public String city; // Grad kojem stanica pripada (npr. "G_0_0")
     public String stationName; // Naziv stanice (npr. "A_0_0" ili "Z_0_0")
     public String type; // Tip stanice: "bus" ili "train"
 
     /**
-     * Konstruktor za kreiranje čvora grafa.
-     * @param id Jedinstveni identifikator čvora (npr. "A_0_0" ili "Z_0_0").
+     * Konstruktor za kreiranje cvora grafa.
+     * @param id Jedinstveni identifikator cvora (npr. "A_0_0" ili "Z_0_0").
      * @param city Grad kojem stanica pripada.
      * @param stationName Naziv stanice.
      * @param type Tip stanice ("bus" ili "train").

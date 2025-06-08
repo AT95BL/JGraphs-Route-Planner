@@ -1,0 +1,25 @@
+Odlučili smo se za Dijkstra algoritam iz nekoliko ključnih razloga, s obzirom na prirodu projektnog zadatka i zahteve za pronalaženjem optimalnih transportnih ruta:
+
+1.  **Svestranost u optimizaciji prema različitim kriterijumima:**
+    * Dijkstra algoritam je izuzetno fleksibilan jer omogućava prilagođavanje težina grana u zavisnosti od željenog kriterijuma optimizacije.
+    * U našem slučaju, to znači da možemo pronaći:
+        * **Najkraće vreme:** težina grane je `duration` + `minTransferTime`.
+        * **Najnižu cenu:** težina grane je `price`.
+        * **Najmanji broj presedanja:** svaka grana ima težinu 1.
+    * Ovo eliminira potrebu za implementacijom više različitih algoritama za svaki kriterijum.
+
+2.  **Prirodno modeliranje problema kao grafa:**
+    * Transportna mreža, sa stanicama kao čvorovima (nodes) i polascima/presedanjima kao granama (edges), prirodno se modeluje kao graf. Dijkstra algoritam je dizajniran upravo za rešavanje problema najkraćeg puta u ovakvim strukturama.
+    * Čvorovi u našem grafu su autobuske (`A_X_Y`) i željezničke (`Z_X_Y`) stanice, a grane predstavljaju veze između njih.
+
+3.  **Podrška za ne-negativne težine grana:**
+    * Osnovni preduslov za ispravno funkcionisanje Dijkstra algoritma je da sve težine grana moraju biti ne-negativne.
+    * U našem scenariju, trajanje putovanja, cena karte i broj presedanja su uvek pozitivni brojevi ili nula (za neke transfere cene), što savršeno odgovara ovom uslovu.
+
+4.  **Efikasnost za pronalaženje najkraćeg puta od jednog izvora:**
+    * Dijkstra algoritam efikasno pronalazi najkraće puteve od jednog izvorišnog čvora (polazne stanice) do svih ostalih dostižnih čvorova. Kako mi tražimo putanju između specifične polazne i odredišne stanice, algoritam se može zaustaviti čim se pronađe najkraći put do ciljnog čvora, što ga čini efikasnim za našu primenu.
+
+5.  **Robustnost i pouzdanost:**
+    * Dijkstra je dobro poznat, temeljno proučen i dokazan algoritam u teoriji grafova. Njegova implementacija je relativno direktna i stabilna, što doprinosi pouzdanosti aplikacije.
+
+Odabir Dijkstre bio je definitivni odgovor na dilemu o algoritmu, uz preporuku da se graf prethodno izgradi, pa tek onda primeni Dijkstra.

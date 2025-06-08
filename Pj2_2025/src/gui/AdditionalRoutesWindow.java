@@ -62,7 +62,7 @@ public class AdditionalRoutesWindow extends JDialog {
             for (Graph.Path path : topRoutes) {
                 JPanel routeEntryPanel = createRouteEntryPanel(path, routeNumber++);
                 routesPanel.add(routeEntryPanel);
-                routesPanel.add(Box.createVerticalStrut(10)); // Razmak između ruta
+                routesPanel.add(Box.createVerticalStrut(10)); // Razmak izmedju ruta
             }
         }
 
@@ -78,7 +78,7 @@ public class AdditionalRoutesWindow extends JDialog {
     }
 
     /**
-     * Kreira panel za prikaz pojedinačne rute.
+     * Kreira panel za prikaz pojedinacne rute.
      * @param path Ruta koju treba prikazati.
      * @param routeNumber Redni broj rute.
      * @return JPanel sa detaljima rute i dugmetom "Kupi kartu".
@@ -90,7 +90,7 @@ public class AdditionalRoutesWindow extends JDialog {
 
         // Panel za osnovne informacije o ruti
         JPanel infoPanel = new JPanel(new GridLayout(3, 1));
-        infoPanel.add(new JLabel("Trajanje: " + path.getTotalDurationMinutes() + " min"));
+        infoPanel.add(new JLabel("Trajanje: " + (path.getTotalDurationMinutes() > 0 ? path.getTotalDurationMinutes(): (-1)*path.getTotalDurationMinutes()) + " min"));
         infoPanel.add(new JLabel("Cena: " + path.getTotalPrice() + "€"));
         infoPanel.add(new JLabel("Presjedanja: " + path.getNumberOfTransfers()));
         panel.add(infoPanel, BorderLayout.WEST);
@@ -123,13 +123,13 @@ public class AdditionalRoutesWindow extends JDialog {
             });
         }
         JScrollPane scrollPane = new JScrollPane(routeTable);
-        scrollPane.setPreferredSize(new Dimension(500, 100)); // Fiksna veličina za scroll pane
+        scrollPane.setPreferredSize(new Dimension(500, 100)); // Fiksna velicina za scroll pane
         panel.add(scrollPane, BorderLayout.CENTER);
 
         JButton btnBuyTicket = new JButton("Kupi Kartu");
         btnBuyTicket.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                buyTicket(path); // Pozovi metodu za kupovinu karte za ovu specifičnu rutu
+                buyTicket(path); // Pozovi metodu za kupovinu karte za ovu specificnu rutu
             }
         });
         JPanel buyButtonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
@@ -144,7 +144,7 @@ public class AdditionalRoutesWindow extends JDialog {
      */
     private void buyTicket(Graph.Path path) {
         String receiptDetails = String.format(
-                "Račun za kupovinu karte (Dodatna ruta):\n" +
+                "Racun za kupovinu karte (Dodatna ruta):\n" +
                 "-----------------------------------\n" +
                 "Relacija: %s do %s\n" +
                 "Vreme kupovine: %s\n" +
@@ -169,10 +169,10 @@ public class AdditionalRoutesWindow extends JDialog {
 
         try {
             ReceiptManager.saveReceipt(receiptDetails);
-            parentWindow.updateReceiptStats(); // Ažuriraj statistiku u glavnom prozoru
-            JOptionPane.showMessageDialog(this, "Karta uspešno kupljena! Račun sačuvan.", "Kupovina Uspešna", JOptionPane.INFORMATION_MESSAGE);
+            parentWindow.updateReceiptStats(); // Azuriraj statistiku u glavnom prozoru
+            JOptionPane.showMessageDialog(this, "Karta uspešno kupljena! Racun sacuvan.", "Kupovina Uspešna", JOptionPane.INFORMATION_MESSAGE);
         } catch (IOException ex) {
-            JOptionPane.showMessageDialog(this, "Greška pri čuvanju računa: " + ex.getMessage(), "Greška", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Greška pri cuvanju racuna: " + ex.getMessage(), "Greška", JOptionPane.ERROR_MESSAGE);
             ex.printStackTrace();
         }
     }

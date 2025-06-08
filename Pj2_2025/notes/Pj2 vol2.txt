@@ -1,0 +1,75 @@
+Naravno, evo detaljnog pregleda kako su ključni delovi projektnog zadatka realizovani kroz kod:
+
+---
+
+### **Realizacija Projektnog Zadatka Kroz Kod**
+
+Programski zadatak zahtevao je razvoj GUI aplikacije za pronalaženje optimalnih ruta u transportnoj mreži. Svaki od ključnih zahteva zadatka realizovan je specifičnim delovima koda, kao što sledi:
+
+1.  **Modeliranje Države kao Matrice Gradova ($n \times m$)** [cite: 1, 4]
+    * **Opis zadatka:** "Država se modeluje kao matrica gradova $(n\times m)$ gdje svaki element predstavlja jedan grad." [cite: 4] "Generator klasu je potrebno modifikovati tako da generiše matricu gradova $n\times m$ tako da se dimenzije prosljeđuju kroz konstruktor." [cite: 9]
+    * **Realizacija u kodu:**
+        * Klasa `util.TransportDataGenerator`[cite: 8]: Njen konstruktor prima argumente za broj redova (`n`) i broj kolona (`m`), omogućavajući generisanje matrice proizvoljnih dimenzija. Logika generisanja gradova i njihovog rasporeda se nalazi unutar ove klase.
+        * Klasa `model.TransportData`: Sadrži polje `countryMap` tipa `String[][]` koje čuva ovu matricu gradova nakon parsiranja JSON-a.
+        * Metoda `util.TransportDataMapper.mapToTransportData()`: Pretvori `List<List<String>>` (kako se čita iz JSON-a) u `String[][]` za `countryMap`.
+
+2.  **Svaki Grad Ima Autobusku i Željezničku Stanicu sa Polascima** [cite: 2, 5, 6]
+    * **Opis zadatka:** "Svaki grad ima autobusku i željezničku stanicu sa različitim vremenima polazaka." [cite: 2, 5] "Polasci su definisani za svaku stanicu i imaju: vrijeme polaska, vrijeme dolaska, cijenu karte i minimalno vrijeme čekanja." [cite: 6]
+    * **Realizacija u kodu:**
+        * Klasa `model.Station`: Predstavlja stanicu sa atributima `city`, `busStation` (ID autobuske stanice), i `trainStation` (ID željezničke stanice).
+        * Klasa `model.Departure`: Predstavlja pojedinačni polazak sa atributima `type` (autobus/voz), `from` (polazna stanica), `to` (dolazna stanica), `departureTime`, `duration` (vreme trajanja putovanja), `price`, i `minTransferTime` (minimalno vreme presedanja nakon dolaska).
+        * `util.TransportDataGenerator`: Zadužen je za generisanje ovih `Station` i `Departure` objekata i upisivanje u JSON fajl.
+
+3.  **Kombinovanje Oba Vida Prevoza (Autobus i Voz)** [cite: 7]
+    * **Opis zadatka:** "Putnik može kombinovati oba vida prevoza (autobus i voz) kako bi stigao do cilja." [cite: 7] "Čvorovi su stanice ($A\_X\_Y$ za autobuse, $Z\_X\_Y$ za vozove), a grane su veze između njih." [cite: 11]
+    * **Realizacija u kodu:**
+        * Klasa `graph.Graph`: Metoda `buildGraph()` kreira grane (`graph.Edge`) ne samo za direktne polaske (`Departure` objekte) već i za **presjedanja unutar istog grada**.
+        * Klasa `graph.Edge`: Ima atribut `type` koji može biti "departure" (za direktne polaske) ili "transfer" (za presjedanja).
+        * Za "transfer" grane, težina (u kontekstu vremena) je `minTransferTime`, što omogućava modelu da uzme u obzir vreme potrebno za prelazak između autobuske i željezničke stanice u istom gradu.
+
+4.  **Učitavanje Podataka iz Generisanog JSON Fajla** [cite: 8, 10]
+    * **Opis zadatka:** "Aplikacija učitava podatke iz JSON fajla generisanog TransportData Generator klase..." [cite: 8] "Generisani fajl sadrži: Mapu države (matricu gradova $n\times m$), Listu stanica (autobuskih i željezničkih), Raspored polazaka za svaku stanicu..." [cite: 10]
+    * **Realizacija u kodu:**
+        * Klasa `util.SimpleJsonParser`: Odgovorna je za čitanje `transport_data.json` fajla i parsiranje njegovog sadržaja u generičke Java objekte (`Map`, `List`, `String`, `Number`).
+        * Klasa `util.TransportDataMapper`: Prima te generičke objekte od `SimpleJsonParser`-a i mapira ih u strogo tipizirane `model.TransportData`, `model.Station` i `model.Departure` objekte.
+
+5.  **Odabir Početnog i Odredišnog Grada/Stanice i Kriterijuma Optimizacije** [cite: 12, 13]
+    * **Opis zadatka:** "Odabir početnog i odredišnog grada (putem interaktivne mape ili padajućih menija (combo box))." [cite: 12] "Odabir kriterijuma optimizacije: Najkraće vrijeme putovanja, Najniža cijena, Najmanji broj presjedanja." [cite: 13]
+    * **Realizacija u kodu:**
+        * Klasa `gui.MainWindow`: Sadrži `JComboBox` komponente za odabir polazne i odredišne stanice. Takođe sadrži `JRadioButton` komponente za odabir kriterijuma optimizacije (vreme, cena, presedanja).
+
+6.  **Prikaz Optimalne Rute i Vizualizacija** [cite: 13, 14]
+    * **Opis zadatka:** "Prikaz optimalne rute (sekvenca prevoza sa detaljima)." [cite: 13] "Vizualizaciju grafa sa označenim optimalnim putem." [cite: 14]
+    * **Realizacija u kodu:**
+        * Metoda `graph.Graph.findOptimalRoute()`: Koristi Dijkstra algoritam za pronalaženje najkraćeg puta. Vraća objekat koji sadrži detalje rute (listu čvorova i grana).
+        * Klasa `gui.MainWindow`: Prikazuje detalje pronađene rute u tabelarnom formatu (`JTable`)[cite: 14, 18].
+        * Klasa `gui.MapPanel`: Vizuelizuje matricu gradova i markira pronađenu optimalnu rutu na mapi.
+
+7.  **Dijkstra Algoritam i Fleksibilne Težine Grana**
+    * **Opis zadatka:** "Odgovor na dilemu je jasan – koristite Dijkstrin algoritam. Implementirajte ga tako da može da radi sa različitim 'težinama' grana u zavisnosti od odabranog kriterijuma optimizacije (najkraće vrijeme, najniža cijena, najmanji broj presjedanja)."
+    * **Realizacija u kodu:**
+        * Klasa `graph.Graph`: Metoda `findOptimalRoute()` sadrži implementaciju Dijkstra algoritma.
+        * Klasa `graph.Edge`: Atribut `weight` se dinamički postavlja prilikom izgradnje grafa ili tokom pretrage (ili Dijkstra algoritam koristi funkciju koja računa težinu grane u zavisnosti od kriterijuma):
+            * Za **najkraće vreme**: `weight` je `departure.getDuration() + departure.getMinTransferTime()` za polaske, a `minTransferTime` za presedanja.
+            * Za **najnižu cenu**: `weight` je `departure.getPrice()`.
+            * Za **najmanji broj presjedanja**: `weight` je `1` za svaku granu (i polazak i presedanje).
+
+8.  **Prikaz Top 5 Ruta** [cite: 14, 19, 20]
+    * **Opis zadatka:** "Prikaz top 5 ruta za zadati kriterijum"[cite: 14]. Dugme "Prikaz dodatnih ruta" otvara novi prozor sa listom top 5 ruta... Svaka ruta prikazuje osnovne informacije... i ima dugme "Kupi kartu"." [cite: 19, 20]
+    * **Realizacija u kodu:**
+        * Klasa `gui.AdditionalRoutesWindow`: Otvara se klikom na dugme. Trenutna implementacija prikazuje optimalnu rutu kao primer, ali je mesto za naprednu implementaciju (npr. K-najkraćih puteva algoritam) za prikaz više ruta.
+        * Svaka prikazana ruta bi imala dugme "Kupi kartu", koje poziva logiku kupovine.
+
+9.  **Funkcionalnost "Kupovina karte" i Čuvanje Računa** [cite: 21, 22, 23]
+    * **Opis zadatka:** "Kupovina karte - omogućava korisniku da kupi prikazanu rutu direktno." [cite: 21] "Generiše se račun u obliku tekstualnog fajla koji sadrži detalje kupovine (relacija, vrijeme, cijena, datum)." [cite: 22] "Račun se automatski čuva u lokalni folder računi." [cite: 23]
+    * **Realizacija u kodu:**
+        * Klasa `util.ReceiptManager`: Sadrži metode za generisanje i čuvanje računa u tekstualni fajl unutar `racuni` foldera.
+        * `gui.MainWindow` (i `gui.AdditionalRoutesWindow`): Dugme "Kupi Kartu" poziva metode iz `ReceiptManager` klase.
+
+10. **Prikaz Ukupnog Broja Prodatih Karata i Ukupnog Prihoda** [cite: 23, 24]
+    * **Opis zadatka:** "Pri svakom pokretanju aplikacije na početnom prozoru se prikazuje: ukupan broj prodatih karata i ukupan prihod od prodaje." [cite: 23] "Ove vrijednosti se učitavaju na osnovu prethodno generisanih računa." [cite: 24]
+    * **Realizacija u kodu:**
+        * Klasa `util.ReceiptManager`: Sadrži metodu koja prikuplja i sumira podatke iz svih postojećih fajlova računa u folderu `racuni`.
+        * `gui.MainWindow`: Poziva metodu iz `ReceiptManager` pri inicijalizaciji, kako bi se statistika prikazala čim se aplikacija pokrene. Nakon svake kupovine, statistika se osvežava.
+
+Ova struktura omogućava modularan i proširiv pristup razvoju aplikacije, gde je svaki deo sistema zadužen za specifičnu funkcionalnost.

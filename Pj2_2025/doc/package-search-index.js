@@ -1,0 +1,1 @@
+packageSearchIndex = [{"l":"All Packages","u":"allpackages-index.html"},{"m":"Pj2_2025","l":"graph"},{"m":"Pj2_2025","l":"main"},{"m":"Pj2_2025","l":"manager"},{"m":"Pj2_2025","l":"model"},{"m":"Pj2_2025","l":"util"}];updateSearchResults();

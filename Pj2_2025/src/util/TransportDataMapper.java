@@ -10,7 +10,20 @@ import java.util.List;
 import java.util.Map;
 
 public class TransportDataMapper {
-
+	
+	/**
+     * Maps a raw, parsed JSON data structure into a {@link TransportData} object.
+     * The input {@code parsedData} is expected to be a {@link Map} where keys correspond to
+     * top-level JSON fields like "countryMap", "stations", and "departures".
+     * This method handles the casting and conversion of generic {@code Object} types
+     * to their respective model classes.
+     *
+     * @param parsedData The raw data parsed from a JSON string, typically a {@link Map}{@code <String, Object>}.
+     * @return A fully populated {@link TransportData} object.
+     * @throws IllegalArgumentException if the {@code parsedData} is not an instance of {@link Map}.
+     * @throws ClassCastException if any of the nested data types do not match the expected structure
+     * (e.g., a list where a map is expected, or a string where a number is expected).
+    */
     @SuppressWarnings("unchecked")
     public static TransportData mapToTransportData(Object parsedData) {
         if (!(parsedData instanceof Map)) {

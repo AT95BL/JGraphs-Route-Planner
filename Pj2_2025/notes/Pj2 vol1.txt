@@ -1,0 +1,61 @@
+Pj2 2025
+
+---
+
+### **Rezime: Kako program za pronalaženje transportnih ruta funkcioniše**
+
+Ovaj program je desktop aplikacija razvijena u Javi, koja korisnicima omogućava interaktivno pronalaženje optimalnih ruta putovanja kroz simuliranu transportnu mrežu. Njegova funkcionalnost se može podeliti u nekoliko ključnih faza:
+
+**1. Pokretanje Aplikacije (Main klasa):**
+   * Program se pokreće preko `main.Main` klase.
+   * `Main` klasa ima vrlo jednostavnu ulogu: ona inicijalizuje glavni GUI prozor (`gui.MainWindow`) unutar Swing-ovog **Event Dispatch Thread-a (EDT)**. Ovo je standardna praksa u Swing aplikacijama i osigurava stabilan i responsivan korisnički interfejs.
+
+**2. Inicijalizacija i Generisanje/Učitavanje Podataka (MainWindow klasa):**
+   * Kada se `MainWindow` pokrene, korisnik unosi dimenzije `n` (broj redova) i `m` (broj kolona) za matricu gradova.
+   * Klikom na dugme "Generiši/Učitaj Podatke":
+     * Instancira se `util.TransportDataGenerator` sa unetim dimenzijama.
+     * Generator kreira simulirane podatke o transportnoj mreži (matricu gradova, autobuske i željezničke stanice, i polaske između njih) i čuva ih u JSON fajlu pod nazivom `transport_data.json`.
+     * Sadržaj `transport_data.json` fajla se zatim učitava nazad u program kao sirov tekstualni string.
+     * `util.SimpleJsonParser` parsira taj string u generičke Java objekte (uglavnom `Map` i `List`).
+     * Ključni korak sledi: `util.TransportDataMapper` preuzima te generičke objekte i mapira ih u strogo tipizirane objekte domenskog modela: `model.TransportData`, koji sadrži `model.Station` i `model.Departure` objekte. Ovaj korak je esencijalan za pretvaranje sirovih podataka u upotrebljivu strukturu.
+     * Na kraju ove faze, `MainWindow` popunjava padajuće menije za odabir polazne i odredišne stanice sa svim dostupnim stanicama iz učitanih podataka.
+     * Ažurira se i vizuelni prikaz mape u `gui.MapPanel` klasi, prikazujući gradove i stanice.
+
+**3. Izgradnja Grafa Transportne Mreže (Graph klasa):**
+   * Nakon uspešnog učitavanja i mapiranja `TransportData` objekta, instancira se klasa `graph.Graph`.
+   * Metoda `Graph.buildGraph(transportData)` koristi mapirane podatke da konstruiše graf:
+     * Svaka autobuska i željeznička stanica iz `transportData.getStations()` postaje **čvor** (`graph.Node`) u grafu.
+     * Svaki polazak iz `transportData.getDepartures()` postaje **grana** (`graph.Edge`) između odgovarajućih čvorova. Težina grane zavisi od tipa optimizacije (vreme, cena, presedanja).
+     * Takođe, kreiraju se grane za **presjedanja** unutar istog grada (između autobuske i željezničke stanice u istom gradu), sa težinom koja odgovara minimalnom vremenu transfera.
+   * Graf je sada spreman za pretragu.
+
+**4. Pronalaženje Optimalne Rute (Dijkstra Algoritam):**
+   * Korisnik odabira polaznu i odredišnu stanicu iz padajućih menija, kao i kriterijum optimizacije (Vreme, Cena, Presjedanja) putem radio dugmadi.
+   * Klikom na dugme "Pronađi Rutu":
+     * Metoda `Graph.findOptimalRoute(startStationId, endStationId, criteria)` se poziva. Ova metoda interno koristi **Dijkstra algoritam**.
+     * **Kako Dijkstra radi:**
+       * Započinje od polaznog čvora (stanice).
+       * Iterativno pronalazi najbliži neposjećeni čvor (na osnovu trenutnog kriterijuma optimizacije).
+       * Ažurira udaljenosti (težine) do susednih čvorova.
+       * Ponovo se izvršava dok ne pronađe najkraći put do odredišnog čvora ili dok ne poseti sve dostižne čvorove.
+     * Težine grana se dinamički prilagođavaju odabranom kriterijumu (npr., za "vreme" se sabiraju trajanje putovanja i vreme transfera; za "cenu" se koristi cena karte; za "presedanja" se koristi fiksna težina 1 po segmentu).
+     * Algoritam vraća objekat `Graph.Path` koji sadrži listu čvorova i grana koje čine optimalnu rutu, zajedno sa ukupnim trajanjem, cijenom i brojem presjedanja.
+
+**5. Prikaz Rezultata i Akcije:**
+   * Ako je ruta pronađena:
+     * Detalji rute (svaki segment putovanja) prikazuju se u `JTable` komponenti u `MainWindow` prozoru.
+     * Ruta se vizuelno ističe na mapi u `MapPanel` klasi.
+     * Sumarni podaci rute (ukupno trajanje, cena, presedanja) prikazuju se korisniku.
+   * **Dugme "Kupi Kartu":**
+     * Kada se klikne, program generiše tekstualni fajl koji sadrži sve detalje o kupljenoj ruti (relacija, vreme kupovine, cena, trajanje, detalji segmenata).
+     * Ovaj račun se čuva u namenski kreiranom folderu `racuni/`.
+     * `util.ReceiptManager` klasa je odgovorna za čuvanje računa i izračunavanje ukupne statistike prodatih karata i prihoda.
+     * Statistika (ukupan broj prodatih karata i prihod) se ažurira i prikazuje na glavnom prozoru.
+   * **Dugme "Prikaz Dodatnih Ruta":**
+     * Otvara novi prozor (`gui.AdditionalRoutesWindow`).
+     * Ovaj prozor bi idealno trebalo da prikaže listu "top 5" ruta po odabranom kriterijumu (trenutna implementacija prikazuje optimalnu rutu kao primer). Svaka prikazana ruta ima svoje dugme "Kupi Kartu".
+
+**6. Kontinuirano Ažuriranje Statistike:**
+   * Prilikom svakog pokretanja aplikacije, kao i nakon svake kupovine karte, `ReceiptManager` učitava sve generisane račune iz `racuni` foldera, parsira ih i izračunava ukupan broj prodatih karata i ukupan prihod. Ove vrednosti se odmah prikazuju na glavnom prozoru, pružajući trenutni uvid u prodaju.
+
+Ukratko, program kombinuje generisanje sintetičkih podataka, njihovo robustno parsiranje i mapiranje, efikasnu primenu algoritma za pronalaženje najkraćih puteva, i intuitivan grafički interfejs, sve to uz mogućnost interakcije (kupovine karata) i praćenja statistike.

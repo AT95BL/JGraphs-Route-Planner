@@ -1,0 +1,7 @@
+1) modifikovati TransportDataGenerator klasu, tako da se izbace sve klase iz nje i spakuju u poseban paket..
+2) modifikovati TransportDataGenerator klasu tako da se istom generišu podaci koji se spremaju u json file
+3) iz prethodno generisanog json file-a, izvući tekst (zna se šta je json) i zatim parsirati
+4) tokom parsiranja izdvojiti i napraviti klase, znači matricu(država šta već..), stanice,..
+5) napraviti čvorove i grane grafa
+6) testiranje backend-a
+7) gui

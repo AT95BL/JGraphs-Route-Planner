@@ -21,14 +21,14 @@ public class MapPanel extends JPanel {
     private static final long serialVersionUID = 1L;
     private String[][] countryMap;
     private List<Station> stations;
-    private Graph transportGraph; // Referenca na graf za pristup čvorovima
-    private Graph.Path highlightedPath; // Ruta koju treba istaći
+    private Graph transportGraph; // Referenca na graf za pristup cvorovima
+    private Graph.Path highlightedPath; // Ruta koju treba istaci
 
     // Dimenzije za crtanje
-    private int cellSize = 80; // Veličina ćelije za svaki grad
+    private int cellSize = 80; // Velicina celije za svaki grad
     private int padding = 20;  // Razmak od ivica panela
 
-    // Mapa za pozicije čvorova na panelu (za crtanje grana)
+    // Mapa za pozicije cvorova na panelu (za crtanje grana)
     private Map<String, Point> nodePositions;
 
     public MapPanel() {
@@ -37,7 +37,7 @@ public class MapPanel extends JPanel {
 
     public void setCountryMap(String[][] countryMap) {
         this.countryMap = countryMap;
-        calculateCellSize(); // Prilagodi veličinu ćelije
+        calculateCellSize(); // Prilagodi velicinu celije
         repaint();
     }
 
@@ -73,7 +73,7 @@ public class MapPanel extends JPanel {
 
         if (numCols > 0 && numRows > 0) {
             cellSize = Math.min(availableWidth / numCols, availableHeight / numRows);
-            cellSize = Math.max(cellSize, 50); // Minimalna veličina ćelije
+            cellSize = Math.max(cellSize, 50); // Minimalna velicina celije
         }
     }
 
@@ -83,17 +83,17 @@ public class MapPanel extends JPanel {
         Graphics2D g2d = (Graphics2D) g;
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-        nodePositions.clear(); // Očisti pozicije svaki put kad crtamo
+        nodePositions.clear(); // Ocisti pozicije svaki put kad crtamo
 
         if (countryMap == null || countryMap.length == 0 || countryMap[0].length == 0) {
-            g2d.drawString("Molimo generišite/učitajte podatke o mapi.", padding, padding);
+            g2d.drawString("Molimo generišite/ucitajte podatke o mapi.", padding, padding);
             return;
         }
 
         int numRows = countryMap.length;
         int numCols = countryMap[0].length;
 
-        // Prilagodi veličinu ćelije pri svakom crtanju za responsivnost
+        // Prilagodi velicinu celije pri svakom crtanju za responsivnost
         calculateCellSize();
 
         // Crtanje gradova (grid)
@@ -121,13 +121,13 @@ public class MapPanel extends JPanel {
                 if (stations != null) {
                     for (Station s : stations) {
                         if (s.getCity().equals(cityName)) {
-                            // Pozicija autobuske stanice (gore levo u ćeliji)
+                            // Pozicija autobuske stanice (gore levo u celiji)
                             Point busPos = new Point(x + cellSize / 4, y + cellSize / 4);
                             g2d.setColor(Color.RED);
                             g2d.fillOval(busPos.x - 5, busPos.y - 5, 10, 10); // Mali crveni krug za autobus
                             nodePositions.put(s.getBusStation(), busPos);
 
-                            // Pozicija željezničke stanice (dole desno u ćeliji)
+                            // Pozicija zeljeznicke stanice (dole desno u celiji)
                             Point trainPos = new Point(x + (3 * cellSize) / 4, y + (3 * cellSize) / 4);
                             g2d.setColor(Color.BLUE);
                             g2d.fillOval(trainPos.x - 5, trainPos.y - 5, 10, 10); // Mali plavi krug za voz
@@ -170,7 +170,7 @@ public class MapPanel extends JPanel {
     }
 
     /**
-     * Pomoćna metoda za crtanje strelice na kraju linije.
+     * Pomocna metoda za crtanje strelice na kraju linije.
      */
     private void drawArrow(Graphics2D g2d, int x1, int y1, int x2, int y2) {
         int ARR_SIZE = 8;
@@ -192,7 +192,7 @@ public class MapPanel extends JPanel {
     @Override
     public Dimension getPreferredSize() {
         if (countryMap == null || countryMap.length == 0 || countryMap[0].length == 0) {
-            return new Dimension(400, 400); // Default veličina
+            return new Dimension(400, 400); // Default velicina
         }
         int numRows = countryMap.length;
         int numCols = countryMap[0].length;
@@ -202,7 +202,7 @@ public class MapPanel extends JPanel {
     @Override
     public void doLayout() {
         super.doLayout();
-        // Ponovno izračunaj veličinu ćelije kada se panel promijeni
+        // Ponovno izracunaj velicinu celije kada se panel promijeni
         calculateCellSize();
     }
 }

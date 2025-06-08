@@ -1,0 +1,10 @@
+Račun za kupovinu karte:
+-----------------------------------
+Relacija: A_0_0 (G_0_0) do Z_0_0 (G_0_0)
+Vreme kupovine: 07.06.2025. 09:52
+Ukupno trajanje: 0 min
+Ukupna cena: 0€
+Broj presjedanja: 1
+-----------------------------------
+Detalji rute:
+  Transfer A_0_0 -> Z_0_0 (20 min)
