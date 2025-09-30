@@ -39,7 +39,7 @@ The project is organized into the following packages:
 1.  **Clone the Repository:**
     ```bash
     git clone [https://github.com/github-username/repository-name.git](https://github-username/repository-name.gitt)
-    cd ime-repozitorijuma
+    cd repository-name
     ```
 2.  **Open the Project in Eclipse:**
       * `File > Import... > Maven > Existing Maven Projects` (if using Maven) or
