@@ -1,58 +1,57 @@
-# Transport Route Finder (Tražilac Transportnih Ruta)
+# 🚂 Transport Route Finder
 
-Ovo je Java desktop aplikacija razvijena korišćenjem Swing biblioteke i WindowsBuilder-a, dizajnirana za pronalaženje optimalnih ruta putovanja unutar simulirane transportne mreže. Aplikacija omogućava korisnicima da pretražuju najefikasnije rute koristeći kombinaciju autobuskog i željezničkog prevoza, optimizujući putovanje prema vremenu, cijeni ili broju presjedanja.
+This is a **Java desktop application** developed using the **Swing** library and **WindowBuilder**, designed to find optimal travel routes within a simulated transport network. The application allows users to search for the most efficient routes using a combination of bus and rail transport, optimizing the journey based on time, price, or the number of transfers.
 
-## 🌟 Mogućnosti
+## 🌟 Features
 
-* **Generisanje transportne mreže:** Dinamičko generisanje države kao `n x m` matrice gradova, gde svaki grad ima autobusku i željezničku stanicu sa definisanim polascima. Podaci se generišu i čuvaju u JSON formatu.
-* **Parsiranje i mapiranje podataka:** Učitavanje i parsiranje transportnih podataka iz JSON fajla u objektno-orijentisanu strukturu.
-* **Izgradnja grafa:** Izgradnja usmjerenog grafa transportne mreže, gde su stanice čvorovi, a polasci i presjedanja grane.
-* **Optimalno pronalaženje rute:** Implementacija Dijkstra algoritma za pronalaženje najkraće rute između dvije odabrane stanice.
-    * **Optimizacija po vremenu:** Pronalazi najbržu rutu.
-    * **Optimizacija po cijeni:** Pronalazi najjeftiniju rutu.
-    * **Optimizacija po broju presjedanja:** Pronalazi rutu sa najmanjim brojem presjedanja.
-* **Interaktivni GUI:** Intuitivni grafički korisnički interfejs zasnovan na Swing-u za unos parametara, vizualizaciju mape i prikaz rezultata.
-* **Vizualizacija rute na mapi:** Prikaz generisane mape gradova sa istaknutom pronađenom optimalnom rutom.
-* **Kupovina karata:** Funkcionalnost za kupovinu odabrane rute, generisanje računa u tekstualnom fajlu i čuvanje u namjenski folder `racuni`.
-* **Statistika prodaje:** Prikaz ukupnog broja prodatih karata i ukupnog prihoda od prodaje, učitanih pri pokretanju aplikacije.
-* **Prikaz dodatnih ruta:** Mogućnost prikaza top 5 ruta (trenutno prikazuje optimalnu rutu kao primjer, za stvarnu implementaciju top 5 ruta potreban je napredniji algoritam poput K-najkraćih puteva).
+  * **Transport Network Generation:** Dynamic generation of a state as an $n \times m$ matrix of cities, where each city has a bus and a rail station with defined departures. Data is generated and saved in **JSON** format.
+  * **Data Parsing and Mapping:** Loading and parsing transport data from a JSON file into an object-oriented structure.
+  * **Graph Construction:** Building a **directed graph** of the transport network, where stations are the nodes, and departures and transfers are the edges.
+  * **Optimal Route Finding:** Implementation of the **Dijkstra's Algorithm** to find the shortest route between two selected stations.
+      * **Time Optimization:** Finds the fastest route.
+      * **Price Optimization:** Finds the cheapest route.
+      * **Transfer Optimization:** Finds the route with the minimum number of transfers.
+  * **Interactive GUI:** An intuitive graphical user interface based on Swing for inputting parameters, map visualization, and displaying results.
+  * **Route Visualization on Map:** Display of the generated city map with the found optimal route highlighted.
+  * **Ticket Purchase:** Functionality for purchasing the selected route, generating a receipt in a text file, and saving it to a dedicated `racuni` (receipts) folder.
+  * **Sales Statistics:** Display of the total number of tickets sold and the total revenue from sales, loaded upon application startup.
+  * **Display of Additional Routes:** Option to display the top 5 routes (currently shows the optimal route as an example; a more advanced algorithm like K-Shortest Paths is required for actual top 5 implementation).
 
-## 🚀 Tehnologije
+## 🚀 Technologies
 
-* **Jezik:** Java
-* **GUI:** Swing (sa WindowsBuilder-om za dizajn)
-* **Strukture podataka/Algoritmi:** Grafovi, Dijkstra algoritam
-* **Serijalizacija/deserijalizacija:** JSON (korišćenjem internog parsera i generatora)
+  * **Language:** Java
+  * **GUI:** Swing (with WindowBuilder for design)
+  * **Data Structures/Algorithms:** Graphs, Dijkstra's Algorithm
+  * **Serialization/Deserialization:** JSON (using an internal parser and generator)
 
-## 🏗️ Struktura projekta
+## 🏗️ Project Structure
 
-Projekat je organizovan u sljedeće pakete:
+The project is organized into the following packages:
 
-* `main`: Glavna klasa za pokretanje aplikacije (`Main.java`).
-* `model`: Sadrži klase koje predstavljaju entitete transportne mreže (npr. `Station`, `Departure`, `TransportData`).
-* `graph`: Sadrži implementaciju grafa (`Graph.java`), čvorova (`Node`), grana (`Edge`) i logiku za Dijkstra algoritam.
-* `util`: Pomoćne klase za generisanje JSON podataka (`TransportDataGenerator`), parsiranje JSON-a (`SimpleJsonParser`), mapiranje parsiranih podataka (`TransportDataMapper`) i upravljanje računima (`ReceiptManager`).
-* `gui`: Sadrži klase za grafički korisnički interfejs (`MainWindow.java`, `MapPanel.java`, `AdditionalRoutesWindow.java`).
+  * `main`: Contains the main class for running the application (`Main.java`).
+  * `model`: Contains classes representing the transport network entities (e.g., `Station`, `Departure`, `TransportData`).
+  * `graph`: Contains the implementation of the graph (`Graph.java`), nodes (`Node`), edges (`Edge`), and the logic for **Dijkstra's Algorithm**.
+  * `util`: Helper classes for generating JSON data (`TransportDataGenerator`), parsing JSON (`SimpleJsonParser`), mapping parsed data (`TransportDataMapper`), and managing receipts (`ReceiptManager`).
+  * `gui`: Contains classes for the graphical user interface (`MainWindow.java`, `MapPanel.java`, `AdditionalRoutesWindow.java`).
 
-## ⚙️ Pokretanje projekta
+## ⚙️ Getting Started
 
-1.  **Klonirajte repozitorijum:**
+1.  **Clone the Repository:**
     ```bash
-    git clone [https://github.com/vase-github-korisnicko-ime/ime-repozitorijuma.git](https://github.com/vase-github-korisnicko-ime/ime-repozitorijuma.git)
+    git clone [https://github.com/github-username/repository-name.git](https://github-username/repository-name.gitt)
     cd ime-repozitorijuma
     ```
-2.  **Otvorite projekat u Eclipse-u:**
-    * `File > Import... > Maven > Existing Maven Projects` (ako koristite Maven) ili
-    * `File > Import... > General > Existing Projects into Workspace` (ako koristite standardni Java projekat).
-3.  **Uverite se da je WindowsBuilder instaliran:**
-    * Ako nije, idite na `Help > Install New Software...` i instalirajte `WindowBuilder` sa vašeg Eclipse release update site-a.
-4.  **Java Verzija:** Preporučuje se Java 11 ili novija. Ako koristite Java 9+, obavezno dodajte `requires java.desktop;` u svoj `module-info.java` fajl (ako postoji) kako biste omogućili pristup Swing biblioteci.
-5.  **Pokrenite aplikaciju:**
-    * Desni klik na `src/main/Main.java` > `Run As > Java Application`.
+2.  **Open the Project in Eclipse:**
+      * `File > Import... > Maven > Existing Maven Projects` (if using Maven) or
+      * `File > Import... > General > Existing Projects into Workspace` (if using a standard Java project).
+3.  **Ensure WindowBuilder is Installed:**
+      * If not, go to `Help > Install New Software...` and install `WindowBuilder` from your Eclipse release update site.
+4.  **Java Version:** Java 11 or newer is recommended. If using Java 9+, ensure you add `requires java.desktop;` to your `module-info.java` file (if it exists) to enable access to the Swing library.
+5.  **Run the Application:**
+      * Right-click on `src/main/Main.java` \> `Run As > Java Application`.
 
+## 📝 Author
 
-## 📝 Autori
+  * AT95BL
 
-* AT95BL
-
----
+-----
