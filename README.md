@@ -49,6 +49,12 @@ The project is organized into the following packages:
 4.  **Java Version:** Java 11 or newer is recommended. If using Java 9+, ensure you add `requires java.desktop;` to your `module-info.java` file (if it exists) to enable access to the Swing library.
 5.  **Run the Application:**
       * Right-click on `src/main/Main.java` \> `Run As > Java Application`.
+  
+## Screenshots
+
+> GUI screen with  preview 
+
+![Login](screenshots/gui.jpeg)
 
 ## 📝 Author
 
