@@ -95,12 +95,12 @@ public class Graph {
                 Node actualDestinationNode = null;
                 // Logika za odredjivanje dolazne stanice (bus/train)
                 String destinationStationId;
-                if ("autobus".equals(d.getType())) {
+                if ("bus".equals(d.getType())) {
                     destinationStationId = "A_" + d.getTo().split("_")[1] + "_" + d.getTo().split("_")[2];
-                } else if ("voz".equals(d.getType())) {
+                } else if ("train".equals(d.getType())) {
                     destinationStationId = "Z_" + d.getTo().split("_")[1] + "_" + d.getTo().split("_")[2];
                 } else {
-                    System.err.println("Nepoznat tip prevoza: " + d.getType());
+                    System.err.println("Unknown transport type: " + d.getType());
                     continue; // Preskoci ovu departure ako je tip nepoznat
                 }
                 actualDestinationNode = getNode(destinationStationId);
@@ -109,7 +109,7 @@ public class Graph {
                 if (sourceNode != null && actualDestinationNode != null) {
                     addEdge(new Edge(sourceNode, actualDestinationNode, d));
                 } else {
-                    System.err.println("Greska: Nije pronadjen cvor za polazak ili odrediste: " + d.getFrom() + " -> " + d.getTo());
+                    System.err.println("Error: Node not found for cvor za polazak ili odrediste: " + d.getFrom() + " -> " + d.getTo());
                 }
             }
         }

@@ -8,129 +8,112 @@ import model.Station;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 /**
- * Panel za crtanje mape gradova i transportnih ruta.
+ * Panel that renders the city grid, bus/train stations, all graph edges,
+ * and a highlighted optimal route — all in a dark, epic visual style.
  */
 public class MapPanel extends JPanel {
 
     private static final long serialVersionUID = 1L;
+
+    // === Color Palette (mirrors MainFrame) ===
+    private static final Color BG_DARK      = new Color(18, 18, 30);
+    private static final Color CITY_FILL    = new Color(38, 38, 68);
+    private static final Color CITY_BORDER  = new Color(70, 70, 110);
+    private static final Color CITY_LABEL   = new Color(180, 180, 230);
+    private static final Color BUS_DOT      = new Color(251, 191, 36);   // amber
+    private static final Color TRAIN_DOT    = new Color(99, 102, 241);   // indigo
+    private static final Color EDGE_COLOR   = new Color(255, 255, 255, 30);
+    private static final Color PATH_COLOR   = new Color(52, 211, 153);   // emerald
+    private static final Color GLOW_COLOR   = new Color(52, 211, 153, 60);
+
     private String[][] countryMap;
     private List<Station> stations;
-    private Graph transportGraph; // Referenca na graf za pristup cvorovima
-    private Graph.Path highlightedPath; // Ruta koju treba istaci
+    private Graph transportGraph;
+    private Graph.Path highlightedPath;
 
-    // Dimenzije za crtanje
-    private int cellSize = 80; // Velicina celije za svaki grad
-    private int padding = 20;  // Razmak od ivica panela
+    private int cellSize = 80;
+    private int padding  = 24;
+    private final Map<String, Point> nodePositions = new HashMap<>();
 
-    // Mapa za pozicije cvorova na panelu (za crtanje grana)
-    private Map<String, Point> nodePositions;
+    public MapPanel() { setBackground(BG_DARK); }
 
-    public MapPanel() {
-        this.nodePositions = new HashMap<>();
-    }
-
-    public void setCountryMap(String[][] countryMap) {
-        this.countryMap = countryMap;
-        calculateCellSize(); // Prilagodi velicinu celije
-        repaint();
-    }
-
-    public void setStations(List<Station> stations) {
-        this.stations = stations;
-        repaint();
-    }
-
-    public void setTransportGraph(Graph transportGraph) {
-        this.transportGraph = transportGraph;
-        repaint();
-    }
-
-    public void setHighlightedPath(Graph.Path path) {
-        this.highlightedPath = path;
-        repaint();
-    }
-
-    public void clearHighlightedPath() {
-        this.highlightedPath = null;
-        repaint();
-    }
+    public void setCountryMap(String[][] m)  { this.countryMap = m; calculateCellSize(); repaint(); }
+    public void setStations(List<Station> s) { this.stations = s; repaint(); }
+    public void setTransportGraph(Graph g)   { this.transportGraph = g; repaint(); }
+    public void setHighlightedPath(Graph.Path p) { this.highlightedPath = p; repaint(); }
+    public void clearHighlightedPath()       { this.highlightedPath = null; repaint(); }
 
     private void calculateCellSize() {
-        if (countryMap == null || countryMap.length == 0 || countryMap[0].length == 0) {
-            return;
-        }
-        int numRows = countryMap.length;
-        int numCols = countryMap[0].length;
-
-        int availableWidth = getWidth() - (2 * padding);
-        int availableHeight = getHeight() - (2 * padding);
-
-        if (numCols > 0 && numRows > 0) {
-            cellSize = Math.min(availableWidth / numCols, availableHeight / numRows);
-            cellSize = Math.max(cellSize, 50); // Minimalna velicina celije
+        if (countryMap == null || countryMap.length == 0) return;
+        int w = getWidth() - 2 * padding, h = getHeight() - 2 * padding;
+        int nc = countryMap[0].length, nr = countryMap.length;
+        if (nc > 0 && nr > 0) {
+            cellSize = Math.max(50, Math.min(w / nc, h / nr));
         }
     }
 
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-        Graphics2D g2d = (Graphics2D) g;
-        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        Graphics2D g2 = (Graphics2D) g;
+        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
 
-        nodePositions.clear(); // Ocisti pozicije svaki put kad crtamo
+        nodePositions.clear();
 
-        if (countryMap == null || countryMap.length == 0 || countryMap[0].length == 0) {
-            g2d.drawString("Molimo generišite/ucitajte podatke o mapi.", padding, padding);
+        // Dark gradient background
+        g2.setPaint(new GradientPaint(0, 0, new Color(12, 12, 24), 0, getHeight(), new Color(22, 22, 42)));
+        g2.fillRect(0, 0, getWidth(), getHeight());
+
+        if (countryMap == null || countryMap.length == 0) {
+            g2.setColor(new Color(99, 102, 241, 120));
+            g2.setFont(new Font("SansSerif", Font.BOLD, 16));
+            String msg = "Generate or load map data to begin";
+            FontMetrics fm = g2.getFontMetrics();
+            g2.drawString(msg, (getWidth() - fm.stringWidth(msg)) / 2, getHeight() / 2);
             return;
         }
 
-        int numRows = countryMap.length;
-        int numCols = countryMap[0].length;
-
-        // Prilagodi velicinu celije pri svakom crtanju za responsivnost
+        int numRows = countryMap.length, numCols = countryMap[0].length;
         calculateCellSize();
 
-        // Crtanje gradova (grid)
+        // ── 1. Draw city grid ──
         for (int r = 0; r < numRows; r++) {
             for (int c = 0; c < numCols; c++) {
-                int x = padding + c * cellSize;
-                int y = padding + r * cellSize;
+                int x = padding + c * cellSize, y = padding + r * cellSize;
+                String city = countryMap[r][c];
 
-                // Crtaj kvadrat za grad
-                g2d.setColor(new Color(220, 220, 255)); // Svetlo plava za grad
-                g2d.fillRect(x, y, cellSize, cellSize);
-                g2d.setColor(Color.DARK_GRAY);
-                g2d.drawRect(x, y, cellSize, cellSize);
+                // City cell with gradient fill
+                GradientPaint gp = new GradientPaint(x, y, CITY_FILL.brighter(), x, y + cellSize, CITY_FILL.darker());
+                g2.setPaint(gp);
+                g2.fillRoundRect(x + 2, y + 2, cellSize - 4, cellSize - 4, 8, 8);
+                g2.setColor(CITY_BORDER);
+                g2.setStroke(new BasicStroke(1.2f));
+                g2.drawRoundRect(x + 2, y + 2, cellSize - 4, cellSize - 4, 8, 8);
 
-                // Ispiši ime grada
-                g2d.setColor(Color.BLACK);
-                g2d.setFont(new Font("SansSerif", Font.BOLD, 12));
-                String cityName = countryMap[r][c];
-                FontMetrics fm = g2d.getFontMetrics();
-                int textWidth = fm.stringWidth(cityName);
-                int textHeight = fm.getHeight();
-                g2d.drawString(cityName, x + (cellSize - textWidth) / 2, y + (cellSize / 2) - (textHeight / 2) + fm.getAscent());
+                // City label
+                g2.setColor(CITY_LABEL);
+                g2.setFont(new Font("SansSerif", Font.BOLD, Math.max(9, cellSize / 7)));
+                FontMetrics fm = g2.getFontMetrics();
+                g2.drawString(city, x + (cellSize - fm.stringWidth(city)) / 2,
+                              y + cellSize / 2 - fm.getHeight() / 2 + fm.getAscent());
 
-                // Crtanje stanica unutar grada
+                // Station dots
                 if (stations != null) {
                     for (Station s : stations) {
-                        if (s.getCity().equals(cityName)) {
-                            // Pozicija autobuske stanice (gore levo u celiji)
-                            Point busPos = new Point(x + cellSize / 4, y + cellSize / 4);
-                            g2d.setColor(Color.RED);
-                            g2d.fillOval(busPos.x - 5, busPos.y - 5, 10, 10); // Mali crveni krug za autobus
-                            nodePositions.put(s.getBusStation(), busPos);
+                        if (s.getCity().equals(city)) {
+                            Point busPos   = new Point(x + cellSize / 4,       y + cellSize * 3 / 4);
+                            Point trainPos = new Point(x + cellSize * 3 / 4,   y + cellSize / 4);
 
-                            // Pozicija zeljeznicke stanice (dole desno u celiji)
-                            Point trainPos = new Point(x + (3 * cellSize) / 4, y + (3 * cellSize) / 4);
-                            g2d.setColor(Color.BLUE);
-                            g2d.fillOval(trainPos.x - 5, trainPos.y - 5, 10, 10); // Mali plavi krug za voz
+                            drawStationDot(g2, busPos,   BUS_DOT,   "B");
+                            drawStationDot(g2, trainPos, TRAIN_DOT, "T");
+
+                            nodePositions.put(s.getBusStation(),   busPos);
                             nodePositions.put(s.getTrainStation(), trainPos);
                         }
                     }
@@ -138,71 +121,98 @@ public class MapPanel extends JPanel {
             }
         }
 
-        // Crtanje svih grana (putovanja) u grafu (tanko, sivo)
+        // ── 2. Draw all graph edges (dim) ──
         if (transportGraph != null) {
-            g2d.setColor(Color.LIGHT_GRAY);
-            g2d.setStroke(new BasicStroke(1));
+            g2.setColor(EDGE_COLOR);
+            g2.setStroke(new BasicStroke(1f));
             for (Node node : transportGraph.getAllNodes()) {
                 for (Edge edge : transportGraph.getEdgesFrom(node)) {
                     Point p1 = nodePositions.get(edge.getSource().getId());
                     Point p2 = nodePositions.get(edge.getDestination().getId());
-                    if (p1 != null && p2 != null) {
-                        g2d.drawLine(p1.x, p1.y, p2.x, p2.y);
-                    }
+                    if (p1 != null && p2 != null && !p1.equals(p2))
+                        g2.drawLine(p1.x, p1.y, p2.x, p2.y);
                 }
             }
         }
 
-        // Crtanje istaknute rute (debelo, zeleno)
+        // ── 3. Draw highlighted route with glow ──
         if (highlightedPath != null && !highlightedPath.getEdges().isEmpty()) {
-            g2d.setColor(Color.GREEN.darker());
-            g2d.setStroke(new BasicStroke(3)); // Deblja linija za istaknutu rutu
+            // Glow pass
+            g2.setColor(GLOW_COLOR);
+            g2.setStroke(new BasicStroke(8f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
             for (Edge edge : highlightedPath.getEdges()) {
                 Point p1 = nodePositions.get(edge.getSource().getId());
                 Point p2 = nodePositions.get(edge.getDestination().getId());
-                if (p1 != null && p2 != null) {
-                    g2d.drawLine(p1.x, p1.y, p2.x, p2.y);
-                    // Opcionalno: nacrtaj strelicu
-                    drawArrow(g2d, p1.x, p1.y, p2.x, p2.y);
+                if (p1 != null && p2 != null && !p1.equals(p2))
+                    g2.drawLine(p1.x, p1.y, p2.x, p2.y);
+            }
+            // Sharp pass
+            g2.setColor(PATH_COLOR);
+            g2.setStroke(new BasicStroke(2.5f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
+            for (Edge edge : highlightedPath.getEdges()) {
+                Point p1 = nodePositions.get(edge.getSource().getId());
+                Point p2 = nodePositions.get(edge.getDestination().getId());
+                if (p1 != null && p2 != null && !p1.equals(p2)) {
+                    g2.drawLine(p1.x, p1.y, p2.x, p2.y);
+                    drawArrow(g2, p1.x, p1.y, p2.x, p2.y);
                 }
             }
         }
+
+        // ── 4. Legend ──
+        drawLegend(g2);
     }
 
-    /**
-     * Pomocna metoda za crtanje strelice na kraju linije.
-     */
-    private void drawArrow(Graphics2D g2d, int x1, int y1, int x2, int y2) {
-        int ARR_SIZE = 8;
-        double dx = x2 - x1;
-        double dy = y2 - y1;
+    private void drawStationDot(Graphics2D g2, Point pos, Color color, String label) {
+        int r = 6;
+        g2.setColor(new Color(color.getRed(), color.getGreen(), color.getBlue(), 60));
+        g2.fillOval(pos.x - r - 2, pos.y - r - 2, (r + 2) * 2, (r + 2) * 2);
+        g2.setColor(color);
+        g2.fillOval(pos.x - r, pos.y - r, r * 2, r * 2);
+        g2.setColor(Color.WHITE);
+        g2.setFont(new Font("SansSerif", Font.BOLD, 8));
+        FontMetrics fm = g2.getFontMetrics();
+        g2.drawString(label, pos.x - fm.stringWidth(label) / 2, pos.y + fm.getAscent() / 2 - 1);
+    }
+
+    private void drawArrow(Graphics2D g2, int x1, int y1, int x2, int y2) {
+        int sz = 8;
+        double dx = x2 - x1, dy = y2 - y1, len = Math.sqrt(dx*dx + dy*dy);
+        if (len == 0) return;
         double angle = Math.atan2(dy, dx);
-        int len = (int) Math.sqrt(dx * dx + dy * dy);
-        if (len == 0) return; // Avoid division by zero
-
-        // Adjust arrow position to be closer to the destination node
-        double arrowX = x2 - (dx / len) * (ARR_SIZE / 2);
-        double arrowY = y2 - (dy / len) * (ARR_SIZE / 2);
-
-        g2d.drawLine(x2, y2, (int) (arrowX + ARR_SIZE * Math.cos(angle - Math.PI / 6)), (int) (arrowY + ARR_SIZE * Math.sin(angle - Math.PI / 6)));
-        g2d.drawLine(x2, y2, (int) (arrowX + ARR_SIZE * Math.cos(angle + Math.PI / 6)), (int) (arrowY + ARR_SIZE * Math.sin(angle + Math.PI / 6)));
+        g2.drawLine(x2, y2, (int)(x2 - sz * Math.cos(angle - Math.PI/6)), (int)(y2 - sz * Math.sin(angle - Math.PI/6)));
+        g2.drawLine(x2, y2, (int)(x2 - sz * Math.cos(angle + Math.PI/6)), (int)(y2 - sz * Math.sin(angle + Math.PI/6)));
     }
 
+    private void drawLegend(Graphics2D g2) {
+        int lx = getWidth() - 150, ly = 16, lw = 135, lh = 60;
+        g2.setColor(new Color(18, 18, 40, 200));
+        g2.fillRoundRect(lx, ly, lw, lh, 8, 8);
+        g2.setColor(new Color(70, 70, 110));
+        g2.setStroke(new BasicStroke(1f));
+        g2.drawRoundRect(lx, ly, lw, lh, 8, 8);
+
+        g2.setFont(new Font("SansSerif", Font.PLAIN, 11));
+        int ty = ly + 16;
+        drawLegendItem(g2, lx + 10, ty, BUS_DOT,   "Bus station");   ty += 16;
+        drawLegendItem(g2, lx + 10, ty, TRAIN_DOT, "Train station"); ty += 16;
+        drawLegendItem(g2, lx + 10, ty, PATH_COLOR, "Active route");
+    }
+
+    private void drawLegendItem(Graphics2D g2, int x, int y, Color color, String label) {
+        g2.setColor(color);
+        g2.fillOval(x, y - 6, 10, 10);
+        g2.setColor(new Color(200, 200, 230));
+        g2.drawString(label, x + 15, y + 3);
+    }
 
     @Override
     public Dimension getPreferredSize() {
-        if (countryMap == null || countryMap.length == 0 || countryMap[0].length == 0) {
-            return new Dimension(400, 400); // Default velicina
-        }
-        int numRows = countryMap.length;
-        int numCols = countryMap[0].length;
-        return new Dimension(numCols * cellSize + 2 * padding, numRows * cellSize + 2 * padding);
+        if (countryMap == null || countryMap.length == 0) return new Dimension(500, 500);
+        return new Dimension(countryMap[0].length * cellSize + 2 * padding,
+                             countryMap.length    * cellSize + 2 * padding);
     }
 
     @Override
-    public void doLayout() {
-        super.doLayout();
-        // Ponovno izracunaj velicinu celije kada se panel promijeni
-        calculateCellSize();
-    }
+    public void doLayout() { super.doLayout(); calculateCellSize(); }
 }

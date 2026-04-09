@@ -18,10 +18,10 @@ import java.util.stream.*;
  */
 public class ReceiptManager {
 
-    private static final String RECEIPTS_FOLDER = "racuni";
+    private static final String RECEIPTS_FOLDER = "receipts";
 
     /**
-     * cuva detalje racuna u tekstualni fajl unutar "racuni" foldera.
+     * cuva detalje racuna u tekstualni fajl unutar "receipts" foldera.
      * @param receiptDetails Sadrzaj racuna.
      * @throws IOException Ako dodje do greške pri pisanju fajla.
      */
@@ -31,7 +31,7 @@ public class ReceiptManager {
             Files.createDirectories(folderPath); // Kreiraj folder ako ne postoji
         }
 
-        String filename = "racun_" + System.currentTimeMillis() + ".txt"; // Jedinstveno ime fajla
+        String filename = "receipt_" + System.currentTimeMillis() + ".txt"; // Jedinstveno ime fajla
         Path filePath = folderPath.resolve(filename);
 
         try (FileWriter writer = new FileWriter(filePath.toFile())) {
@@ -50,7 +50,7 @@ public class ReceiptManager {
             return 0; // Nema racuna
         }
 
-        // Broj fajlova u folderu "racuni"
+        // Broj fajlova u folderu "receipts"
         return (int) Files.list(folderPath).filter(Files::isRegularFile).count();
     }
 
@@ -66,7 +66,7 @@ public class ReceiptManager {
         }
 
         double totalRevenue = 0.0;
-        Pattern pricePattern = Pattern.compile("Ukupna cena: (\\d+)€"); // Regex za pronalazenje cene
+        Pattern pricePattern = Pattern.compile("Total cost: (\\d+) E"); // Regex to find ticket price
 
         try (var stream = Files.list(folderPath)) {
             for (Path filePath : stream.filter(Files::isRegularFile).collect(Collectors.toList())) {
