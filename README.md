@@ -97,6 +97,20 @@ If you see errors regarding ct.sym or version mismatches:
     Set Compiler compliance level to 17 or 21.
 
     Click Apply and Close, then select Yes to rebuild the project.
+
+ ##  📖 How to Use the App
+
+    Launch: Run src/main/Main.java as a Java Application.
+
+    Initialize: Click the Generate / Load Data button at the top. The status bar will confirm "Data generated and loaded successfully".
+
+    Search: * Enter your starting point (e.g., A_0_0) and destination (e.g., A_0_1).
+
+        Select your optimization preference: Time, Price, or Transfers.
+
+        Click Find Route.
+
+    Purchase: Click Buy Ticket to save a receipt to the /racuni folder.
   
 ## Screenshots
 
