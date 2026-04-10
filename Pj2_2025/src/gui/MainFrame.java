@@ -90,8 +90,21 @@ public class MainFrame extends JFrame {
 
     private void applyDarkDefaults() {
         try { UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName()); } catch (Exception ignored) {}
+        
+        // Existing keys
         UIManager.put("OptionPane.background", BG_PANEL);
         UIManager.put("OptionPane.messageForeground", TEXT_PRIMARY);
+        
+        // Add these new keys to fix the labels and panels inside the dialog
+        UIManager.put("Panel.background", BG_PANEL); 
+        UIManager.put("Label.foreground", TEXT_PRIMARY);
+        UIManager.put("OptionPane.foreground", TEXT_PRIMARY);
+        
+        // Optional: Make buttons visible if they are also dark
+        UIManager.put("Button.background", BG_CARD);
+        UIManager.put("Button.foreground", TEXT_PRIMARY);
+
+        // Existing table/scrollpane keys...
         UIManager.put("Table.background", BG_CARD);
         UIManager.put("Table.foreground", TEXT_PRIMARY);
         UIManager.put("Table.gridColor", BORDER_COLOR);

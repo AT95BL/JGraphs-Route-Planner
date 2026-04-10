@@ -1,0 +1,10 @@
+TRANSIT TICKET RECEIPT (Alternative Route)
+===============================
+Route     : A_0_0 (G_0_0) -> A_0_1 (G_0_1)
+Issued    : 10.04.2026 10:08
+Duration  : 100 min
+Total cost: 806 E
+Transfers : 0
+-------------------------------
+Segments:
+  A_0_0 (G_0_0) -> A_0_1 (G_0_1) [bus, 09:00, 100min, 806€]
