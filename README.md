@@ -110,7 +110,7 @@ If you see errors regarding ct.sym or version mismatches:
 
         Click Find Route.
 
-    Purchase: Click Buy Ticket to save a receipt to the /racuni folder.
+    Purchase: Click Buy Ticket to save a receipt to the /receipts folder.
   
 ## Screenshots
 
